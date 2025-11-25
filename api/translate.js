@@ -1,19 +1,26 @@
-const fetch = require("node-fetch");
+export default function handler(req, res) {
+  try {
+    const { text } = req.query;
 
-module.exports = async (req, res) => {
-    try {
-        const { text } = req.body;  // ✅ gunakan req.body
-
-        if (!text) {
-            return res.status(400).json({ error: "text wajib dikirim" });
-        }
-
-        const result = {
-            arabic: "أخت صغيرة ذهبت إلى المدرسة"
-        };
-
-        res.json(result);
-    } catch (err) {
-        res.status(500).json({ error: "Server error (translate)", details: err.message });
+    if (!text) {
+      return res.status(400).json({ error: "Parameter 'text' wajib diisi" });
     }
-};
+
+    // DIAMBIL dari file translate.js kamu
+    const kamus = {
+      "aku pergi ke sekolah": "أَنَا أَذْهَبُ إِلَى المَدْرَسَةِ",
+      rumah: "بَيْت",
+      makan: "يَأْكُلُ",
+      minum: "يَشْرَبُ",
+    };
+
+    const hasil = kamus[text] || "Tidak ditemukan";
+
+    res.status(200).json({
+      indonesia: text,
+      arab: hasil,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Server error", detail: err.message });
+  }
+}
