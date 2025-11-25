@@ -1,5 +1,5 @@
 module.exports = {
-  KAMUS_AR_ID: {
+  arToId: {
   "كتب": "menulis",
   "كاتب": "penulis",
   "مكتوب": "tertulis",
@@ -529,7 +529,7 @@ module.exports = {
   "جاهز للنشر": "siapdeploy"
 },
 
-  KAMUS_ID_AR: {
+  idToAr: {
   "menulis": "كتب",
   "penulis": "كاتب",
   "tertulis": "مكتوب",
