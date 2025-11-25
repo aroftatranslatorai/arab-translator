@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h3>TEST SHOROF</h3>
+<input id="madhi" placeholder="كتب">
+<button onclick="send()">Kirim</button>
+
+<pre id="out"></pre>
+
+<script>
+function send() {
+  const madhi = document.getElementById("madhi").value;
+
+  fetch("http://localhost:3000/api/shorof", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ madhi })
+  })
+  .then(r => r.json())
+  .then(j => document.getElementById("out").textContent = JSON.stringify(j, null, 2))
+  .catch(e => document.getElementById("out").textContent = e.toString());
+}
+</script>
+</body>
+</html>
+
