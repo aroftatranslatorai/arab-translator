@@ -1,25 +1,7 @@
-import { KAMUS_AR_ID } from "./kamus_ar_id.js";
+const { KAMUS_AR_ID } = require("./kamus_ar_id");
+const { cleanArabic } = require("./arabTools");
 
-export function translateArToId(text) {
-  if (!text) return "";
-
-  const words = text.split(/\s+/);
-  let result = [];
-
-  for (const word of words) {
-    const lower = word.trim();
-    const key = lower.replace(/[^\u0600-\u06FF]/g, "");
-
-    if (!key) continue;
-
-    const found = KAMUS_AR_ID[key];
-    if (found) {
-      result.push(found);
-    } else {
-      result.push("[?]");
-    }
-  }
-
-  return result.join(" ");
-}
-
+module.exports = function translateArabicToIndo(input) {
+  const cleaned = cleanArabic(input);
+  return KAMUS_AR_ID[cleaned] || null;
+};

@@ -1,23 +1,17 @@
-import { masterTranslate } from "../utils/translator_master.js";
+const master = require("../utils/translator_master");
 
-export default async function handler(req, res) {
+export default function handler(req, res) {
   try {
     const { text } = req.query;
+    if (!text) return res.status(400).json({ error: "text is required" });
 
-    if (!text) {
-      return res.status(400).json({ error: "Parameter 'text' wajib diisi" });
-    }
-
-    const result = await masterTranslate(text);
-
-    return res.status(200).json({
+    const output = master(text);
+    res.status(200).json({
       input: text,
-      ...result
+      direction: output.direction,
+      result: output.result
     });
   } catch (err) {
-    return res.status(500).json({
-      error: "Server error",
-      detail: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 }
