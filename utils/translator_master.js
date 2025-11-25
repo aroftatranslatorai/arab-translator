@@ -12,8 +12,11 @@ module.exports = function masterTranslator(text) {
     };
   }
 
-  return {
-    direction: "ID → AR",
-    result: translateID(text)
-  };
+  if (lang === "id") {
+    return {
+      direction: "ID → AR",
+      result: translateID(text)
+    };
+  }
+
 };
