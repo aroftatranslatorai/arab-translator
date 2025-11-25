@@ -1,26 +1,58 @@
+import { kamus_ar_id } from "../utils/kamus_ar_id.js";
+
+// Mengubah superkamus string -> object dictionary cepat
+function buildDictionary(raw) {
+  const dict = {};
+  const rows = raw.split("|");
+
+  for (const row of rows) {
+    if (!row.includes(":")) continue;
+
+    const [arab, indo] = row.split(":").map(x => x.trim());
+    if (!arab || !indo) continue;
+
+    dict[arab] = indo;
+  }
+
+  return dict;
+}
+
+const KAMUS = buildDictionary(kamus_ar_id);
+
 export default function handler(req, res) {
   try {
-    const { text } = req.query;
+    const text = req.query.text || req.body?.text || "";
 
     if (!text) {
-      return res.status(400).json({ error: "Parameter 'text' wajib diisi" });
+      return res.status(400).json({ error: "text wajib dikirim" });
     }
 
-    // DIAMBIL dari file translate.js kamu
-    const kamus = {
-      "aku pergi ke sekolah": "أَنَا أَذْهَبُ إِلَى المَدْرَسَةِ",
-      rumah: "بَيْت",
-      makan: "يَأْكُلُ",
-      minum: "يَشْرَبُ",
-    };
+    const words = text.trim().split(/\s+/);
+    const results = [];
 
-    const hasil = kamus[text] || "Tidak ditemukan";
+    for (const w of words) {
+      const clean = w.replace(/[^\u0600-\u06FFa-zA-Z]/g, "");
 
-    res.status(200).json({
-      indonesia: text,
-      arab: hasil,
+      // Arab → Indonesia
+      if (/[\u0600-\u06FF]/.test(clean)) {
+        results.push(KAMUS[clean] || "[?]");
+      }
+      // Indonesia → Arab masih dikunci (akan dibuat pada B2)
+      else {
+        results.push("[ID→AR belum dibuat]");
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      input: text,
+      result: results.join(" ")
     });
+
   } catch (err) {
-    res.status(500).json({ error: "Server error", detail: err.message });
+    return res.status(500).json({
+      error: "Error pada translate.js",
+      detail: err.message
+    });
   }
 }
