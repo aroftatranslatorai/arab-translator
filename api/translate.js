@@ -1,13 +1,9 @@
-// api/translate.js — HYBRID ENGINE API v3
+// api/translate.js — HYBRID ENGINE API (CommonJS untuk Vercel)
 
-import masterTranslator from "../../utils/translator_master"; // pakai ES import jika bisa
-// Jika error ES import, gunakan require:
-// const masterTranslator = require("../../utils/translator_master");
+const masterTranslator = require("../../utils/translator_master");
 
-export default async function handler(req, res) {
-  // ===========================
+module.exports = async (req, res) => {
   // CORS
-  // ===========================
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -19,15 +15,13 @@ export default async function handler(req, res) {
   try {
     const { text } = req.query;
 
-    if (!text || text.trim() === "") {
+    if (!text) {
       return res.status(400).json({
+        ok: false,
         error: "Parameter 'text' wajib diisi"
       });
     }
 
-    // ===============================================
-    // Jalankan Hybrid Engine v3
-    // ===============================================
     const output = await masterTranslator(text);
 
     return res.status(200).json({
@@ -38,10 +32,11 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
+    console.error("API Error:", err);
     return res.status(500).json({
       ok: false,
       error: "Server error",
       detail: err.message
     });
   }
-}
+};
